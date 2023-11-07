@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class charController : MonoBehaviour
@@ -8,7 +9,10 @@ public class charController : MonoBehaviour
     public bool canMove = true;
     bool shouldOpenParachute=>Input.GetKey(KeyCode.E)&&!isGrounded;
 
+    [Header("UI")]
     [SerializeField] GameObject spriteSet;
+    [SerializeField] TextMeshProUGUI scoreText;
+    [SerializeField] GameObject popUpPoint;
 
     [Header("Player Stats")]
     [SerializeField] private float playerSpeed;
@@ -22,8 +26,12 @@ public class charController : MonoBehaviour
     private float timer = 0f;
     public float delayAmount;
 
+    [Header("ButtonAnims")]
+    public Animator buttonPrchtAnim;
+    public Animator buttonRightAnim;
+    public Animator buttonLeftAnim;
 
-    
+
 
     [SerializeField] private int speedMultiplier;
     //others
@@ -33,7 +41,9 @@ public class charController : MonoBehaviour
     bool facingRight=true;
     bool isGrounded;
     bool usingParachute;
-   
+    float parachuteCheck;
+
+    
 
 
     private void Start()
@@ -48,16 +58,13 @@ public class charController : MonoBehaviour
     {
         if(canMove)
         {
-            handleMoveInput();
+            //handleMoveInput();
             handleAnimations();
             handleFacing();
             handleGravity();
             handleScore();
-
-            if(shouldOpenParachute)
-                handleParachute();
-            else
-                handleParachuteClose();
+            handleParachute();
+            handleUI();
 
             applyMovement();
         }
@@ -86,7 +93,7 @@ public class charController : MonoBehaviour
     void handleScore()
     {
         timer += Time.deltaTime;
-      
+        delayAmount-= Time.deltaTime*.005f;
         if (timer >= delayAmount)
         {
             timer = 0f;
@@ -109,29 +116,43 @@ public class charController : MonoBehaviour
             facingRight = false;
         }
     }
-    
+
     void handleParachute()
     {
-        gravity = parachuteGravity;
-        usingParachute = true;
-    }
-    void handleParachuteClose()
-    {
-        if(usingParachute)
+      
+        if (usingParachute)
         {
-            gravity = mainGravity;
-            usingParachute = false;
+            parachuteCheck = 1;
+            gravity = parachuteGravity;
         }
+          
         else
         {
-          
+            gravity = mainGravity;
+
+            if (parachuteCheck ==1)
+            {
                 gravity += 0.25f * Time.deltaTime;
+            }
         }
 
         if (isGrounded)
-            gravity = mainGravity;
-     
-        
+            parachuteCheck = 0;
+        else
+            parachuteCheck = 1;
+           
+
+    }
+    
+    public void handleParachuteOpen()
+    {    
+        usingParachute = true;
+        buttonPrchtAnim.SetBool("open", true);
+    }
+    public void handleParachuteClose()
+    {
+        usingParachute = false;
+        buttonPrchtAnim.SetBool("open", false);
     }
 
     void handleGravity()
@@ -139,7 +160,32 @@ public class charController : MonoBehaviour
         if(!isGrounded)
             rb.AddForce(Vector2.down * gravity);
     }
-   
+    public void moveRight()
+    {
+        buttonRightAnim.SetBool("click", true);
+        if(canMove)
+            currentInput.x = 1;
+    }
+
+    public void moveLeft()
+    {
+        buttonLeftAnim.SetBool("click", true);
+        if (canMove)
+             currentInput.x = -1;
+    }
+
+    public void notMoving()
+    {
+        buttonLeftAnim.SetBool("click", false);
+        buttonRightAnim.SetBool("click", false);
+        currentInput.x = 0;
+    }
+
+    void handleUI()
+    {
+        scoreText.text=score.ToString();
+    }
+
     void applyMovement()
     {   
 
@@ -149,10 +195,10 @@ public class charController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            print("www");
-
             isGrounded = true;
         }
+
+       
   
     }
     private void OnCollisionExit2D(Collision2D collision)
@@ -163,5 +209,6 @@ public class charController : MonoBehaviour
         }
     }
 
+  
 
 }

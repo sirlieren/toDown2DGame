@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class tabCreator : MonoBehaviour
 {
+    [SerializeField] private charController cC;
     [SerializeField] private GameObject[] tabs;
     [SerializeField] private GameObject[] badTabs;
+    [SerializeField] private GameObject[] fruits;
     private GameObject[] currentTabs;
 
     [SerializeField] private int maxTab = 15;
@@ -18,8 +20,10 @@ public class tabCreator : MonoBehaviour
 
     private GameObject destroyIt;
 
-
+    bool createBadTab = false;
     bool isCreatedTab = false;
+
+    public bool startGame=false;
     void Start()
     {
         
@@ -28,10 +32,21 @@ public class tabCreator : MonoBehaviour
     
     void Update()
     {
-        if (!isCreatedTab&&gameObject.transform.childCount<25)
+        if(startGame)
         {
-            creatTab();
+            if (!isCreatedTab && gameObject.transform.childCount < 25)
+            {
+                creatTab();
+            }
+            if (cC.score > 100)
+            {
+                createBadTab = true;
+            }
         }
+
+        
+            
+
         
     }
     
@@ -43,11 +58,36 @@ public class tabCreator : MonoBehaviour
 
         currentYpos -= spawnPosY;
 
-        Vector3 createPos= new Vector3(spawnPosX, currentYpos, 0);
-        int whichTab = Random.Range(0, tabs.Length);
+        if(createBadTab)
+        {
+            Vector3 createPos = new Vector3(spawnPosX, currentYpos, 0);
+            int isBadTab=Random.Range(0,10);
+            if(isBadTab==8)
+            {
+                GameObject newTab = Instantiate(badTabs[0], createPos, default);
+                newTab.transform.parent = transform;
+            }
+            else
+            {
+                
+                int whichTab = Random.Range(0, tabs.Length);
+                GameObject newTab = Instantiate(tabs[whichTab], createPos, default);
+                newTab.transform.parent = transform;
+                createFruit(createPos);
+            }
+          
+        }
+        else
+        {
+            Vector3 createPos = new Vector3(spawnPosX, currentYpos, 0);
+            int whichTab = Random.Range(0, tabs.Length);
+            GameObject newTab = Instantiate(tabs[whichTab], createPos, default);
+            newTab.transform.parent = transform;
+            createFruit(createPos);
+        }
+       
 
-        GameObject newTab= Instantiate(tabs[whichTab], createPos, default);
-        newTab.transform.parent = transform;
+      
         
         
 
@@ -57,6 +97,17 @@ public class tabCreator : MonoBehaviour
         
     }
 
+    void createFruit(Vector3 creatFrPos)
+    {
+        int createFruit = Random.Range(0, 11);
+        if(createFruit>8)
+        {
+            int whichFruit=Random.Range(0, fruits.Length);
+            GameObject fruit = Instantiate(fruits[whichFruit], creatFrPos+new Vector3(0,.5f,0), default);
+            fruit.transform.parent = transform;
+            
+        }
+    }
 
     IEnumerator tabCoroutine()
     {
