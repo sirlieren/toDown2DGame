@@ -12,6 +12,7 @@ public class charController : MonoBehaviour
     [Header("UI")]
     [SerializeField] GameObject spriteSet;
     [SerializeField] TextMeshProUGUI scoreText;
+    [SerializeField] TextMeshProUGUI finalScoreText;
     [SerializeField] GameObject popUpPoint;
 
     [Header("Player Stats")]
@@ -25,15 +26,21 @@ public class charController : MonoBehaviour
     public int score; 
     private float timer = 0f;
     public float delayAmount;
+    [SerializeField] private int speedMultiplier;
 
     [Header("ButtonAnims")]
     public Animator buttonPrchtAnim;
     public Animator buttonRightAnim;
     public Animator buttonLeftAnim;
 
+    [Header("Canvas")]
+    [SerializeField] private Canvas deadCanvas;
+    private CanvasGroup deadCanvasGroup;
+    [SerializeField] private Canvas mainCanvas;
+    private CanvasGroup mainCanvasGroup;
 
 
-    [SerializeField] private int speedMultiplier;
+
     //others
     Rigidbody2D rb;
     Vector2 currentInput;
@@ -42,15 +49,17 @@ public class charController : MonoBehaviour
     bool isGrounded;
     bool usingParachute;
     float parachuteCheck;
+    camFollow camF;
 
     
 
 
     private void Start()
     {
-        
+        deadCanvas.enabled = false;
+        mainCanvas.enabled = true;
         rb = GetComponent<Rigidbody2D>();
-       
+        camF = Camera.main.GetComponent<camFollow>();
         anim=GetComponentInChildren<Animator>();
     }
 
@@ -67,6 +76,16 @@ public class charController : MonoBehaviour
             handleUI();
 
             applyMovement();
+        }
+        else
+        {
+            handleDead();
+           
+        }
+
+        if(currentInput!=Vector2.zero)
+        {
+            camF.startGame = true;
         }
 
 
@@ -92,14 +111,18 @@ public class charController : MonoBehaviour
 
     void handleScore()
     {
-        timer += Time.deltaTime;
-        delayAmount-= Time.deltaTime*.005f;
-        if (timer >= delayAmount)
+        if(camF.startGame==true)
         {
-            timer = 0f;
-            score+=speedMultiplier;
-       
+            timer += Time.deltaTime;
+            delayAmount -= Time.deltaTime * .005f;
+            if (timer >= delayAmount)
+            {
+                timer = 0f;
+                score += speedMultiplier;
+
+            }
         }
+      
 
     }
 
@@ -190,6 +213,17 @@ public class charController : MonoBehaviour
     {   
 
         rb.velocity = currentInput*playerSpeed;
+    }
+
+    void handleDead()
+    {
+        deadCanvas.enabled = true;
+        deadCanvasGroup=deadCanvas.GetComponent<CanvasGroup>();
+        deadCanvasGroup.interactable = true;
+        deadCanvasGroup.alpha += .5f * Time.deltaTime;
+        mainCanvas.enabled = false;
+        
+        finalScoreText.text = score.ToString();
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {

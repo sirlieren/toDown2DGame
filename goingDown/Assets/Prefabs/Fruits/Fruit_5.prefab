@@ -113,7 +113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 271f8b48b6f25ba45a6e3c8c7ff33c51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fruitScore: 5
+  fruitScore: 10
   popUp: {fileID: 4753207868365789398, guid: 435d4c79638913e4e9c137600a4cad9d, type: 3}
 --- !u!1 &8489362215771524529
 GameObject:

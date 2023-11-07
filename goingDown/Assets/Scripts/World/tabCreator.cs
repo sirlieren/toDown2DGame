@@ -23,7 +23,7 @@ public class tabCreator : MonoBehaviour
     bool createBadTab = false;
     bool isCreatedTab = false;
 
-    public bool startGame=false;
+    
     void Start()
     {
         
@@ -32,19 +32,14 @@ public class tabCreator : MonoBehaviour
     
     void Update()
     {
-        if(startGame)
+        if (!isCreatedTab&&gameObject.transform.childCount<25)
         {
-            if (!isCreatedTab && gameObject.transform.childCount < 25)
-            {
-                creatTab();
-            }
-            if (cC.score > 100)
-            {
-                createBadTab = true;
-            }
+            creatTab();
         }
-
-        
+        if(cC.score>100)
+        {
+            createBadTab = true;
+        }
             
 
         

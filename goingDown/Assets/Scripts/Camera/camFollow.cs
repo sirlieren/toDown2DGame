@@ -25,6 +25,8 @@ public class camFollow : MonoBehaviour
 
     Camera cam;
     private Vector3 velo= Vector3.zero;
+
+    public bool startGame=false;
     private void Start()
     {
         cam = GetComponent<Camera>();
@@ -34,8 +36,11 @@ public class camFollow : MonoBehaviour
     }
     private void Update()
     {
-
-        speedCamValue();
+        if(startGame)
+        {
+            speedCamValue();
+        }
+      
         cameraColor();
     }
 
