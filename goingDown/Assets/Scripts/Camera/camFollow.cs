@@ -20,7 +20,6 @@ public class camFollow : MonoBehaviour
     public Color secondaryColor; 
     public float transitionDuration = 2.0f;
     private float transitionTimer = 0.0f;
-    private bool isTransitioning = false;
     private bool toSecondaryColor = true;
 
     Camera cam;
@@ -36,10 +35,9 @@ public class camFollow : MonoBehaviour
     }
     private void Update()
     {
-        if(startGame)
-        {
+       
             speedCamValue();
-        }
+        
       
         cameraColor();
     }
@@ -61,7 +59,7 @@ public class camFollow : MonoBehaviour
 
             if (transitionTimer >= transitionDuration)
             {
-                isTransitioning = false;
+           
                 toSecondaryColor = !toSecondaryColor; // Renk geçiþi tamamlandýðýnda diðer renge geçiþ yapýn.
                 transitionTimer = 0.0f;
             }

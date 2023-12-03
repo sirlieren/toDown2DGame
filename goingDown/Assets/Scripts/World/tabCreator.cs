@@ -11,7 +11,7 @@ public class tabCreator : MonoBehaviour
     [SerializeField] private GameObject[] fruits;
     private GameObject[] currentTabs;
 
-    [SerializeField] private int maxTab = 15;
+    //[SerializeField] private int maxTab = 15;
     [SerializeField] private float spawnSpeed;
 
     [SerializeField] private float spawnPosXmin, spawnPosXmax;
